@@ -9,13 +9,13 @@
 #define MINUS   "MINUS"
 #define MUL     "MUL"
 #define DIV     "DIV"
+#define EXP     "EXP"
 #define LPAREN  "LPAREN"
 #define RPAREN  "RPAREN"
 #define EOE     "EOE" // end of expression.
 
 typedef struct Token {
     char type[20];
-    //int value;
     float value;
 } Token;
 
@@ -91,6 +91,11 @@ Token get_next_token() {
             expr++;
             return token;
         }
+        if (*expr == '^') {
+            Token token = {EXP, 0};
+            expr++;
+            return token;
+        }
         if (*expr == '(') {
             Token token = {LPAREN, 0};
             expr++;
@@ -150,7 +155,7 @@ float factor() {
 float term() {
     float result = factor();
 
-    while ( ! strcmp(curr_token.type, MUL) || ! strcmp(curr_token.type, DIV)) {
+    while ( ! strcmp(curr_token.type, MUL) || ! strcmp(curr_token.type, DIV) || ! strcmp(curr_token.type, EXP)) {
         Token token = curr_token;
         if ( ! strcmp(token.type, MUL)) {
             consume(MUL);
@@ -158,6 +163,9 @@ float term() {
         } else if ( ! strcmp(token.type, DIV)) {
             consume(DIV);
             result /= factor();
+        } else if ( ! strcmp(token.type, EXP)) {
+            consume(EXP);
+            result = pow(result, factor());
         }
     }
 

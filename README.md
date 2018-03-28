@@ -11,6 +11,6 @@ A recursive-descent parser in C, that evaluates arithmetic expressions
 - [x] division
 - [x] negation
 - [x] parentheses
-- [ ] exponentiation
+- [x] exponentiation
 - [x] floating point
 - [x] error handling
