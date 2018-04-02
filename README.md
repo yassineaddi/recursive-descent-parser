@@ -1,6 +1,19 @@
 # recursive-descent-parser
 A recursive-descent parser in C, that evaluates arithmetic expressions
 
+```
+$ gcc parser.c -o parser
+$ parser
+> 3+9
+7
+> 10 * 4  * 2 * 3 / 8
+30
+> 5 - - - + - (3 + 4) - +2
+10
+> 2^10
+1024
+```
+
 ## what does it do?
 
 - [x] addition

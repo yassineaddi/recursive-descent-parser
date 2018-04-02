@@ -4,15 +4,15 @@
 #include <ctype.h>
 #include <math.h>
 
-#define NUM     "NUM"
-#define PLUS    "PLUS"
-#define MINUS   "MINUS"
+#define FLOAT   "FLOAT"
+#define ADD     "ADD"
+#define SUB     "SUB"
 #define MUL     "MUL"
 #define DIV     "DIV"
 #define EXP     "EXP"
 #define LPAREN  "LPAREN"
 #define RPAREN  "RPAREN"
-#define EOE     "EOE" // end of expression.
+#define EXPR    "EXPR" // end of expression
 
 typedef struct Token {
     char type[20];
@@ -49,7 +49,7 @@ void __repr_token(Token token) {
 Token get_next_token() {
     while (*expr != '\0') {
         if (*expr >= '0' && *expr <= '9') {
-            Token token = {NUM, *expr++ - '0'};
+            Token token = {FLOAT, *expr++ - '0'};
             while ((*expr >= '0' && *expr <= '9') || *expr == '.') {
                 if (*expr == '.') {
                     expr++;
@@ -72,12 +72,12 @@ Token get_next_token() {
             return token;
         }
         if (*expr == '+') {
-            Token token = {PLUS, 0};
+            Token token = {ADD, 0};
             expr++;
             return token;
         }
         if (*expr == '-') {
-            Token token = {MINUS, 0};
+            Token token = {SUB, 0};
             expr++;
             return token;
         }
@@ -112,7 +112,7 @@ Token get_next_token() {
         }
         __invalid_char_error(*expr);
     }
-    Token token = {EOE, 0};
+    Token token = {EXPR, 0};
     return token;
 }
 
@@ -127,8 +127,8 @@ void consume(char token_type[]) {
 float factor() {
     Token token = curr_token;
 
-    if ( ! strcmp(token.type, NUM)) {
-        consume(NUM);
+    if ( ! strcmp(token.type, FLOAT)) {
+        consume(FLOAT);
         return token.value;
     }
     if ( ! strcmp(token.type, LPAREN)) {
@@ -137,13 +137,13 @@ float factor() {
         consume(RPAREN);
         return result;
     }
-    if ( ! strcmp(token.type, PLUS) || ! strcmp(token.type, MINUS)) {
+    if ( ! strcmp(token.type, ADD) || ! strcmp(token.type, SUB)) {
         int result = 0;
-        if ( ! strcmp(token.type, PLUS)) {
-            consume(PLUS);
+        if ( ! strcmp(token.type, ADD)) {
+            consume(ADD);
             result += factor();
-        } else if ( ! strcmp(token.type, MINUS)) {
-            consume(MINUS);
+        } else if ( ! strcmp(token.type, SUB)) {
+            consume(SUB);
             result -= factor();
         }
         return result;
@@ -175,13 +175,13 @@ float term() {
 float parse() {
     float result = term();
 
-    while ( ! strcmp(curr_token.type, PLUS) || ! strcmp(curr_token.type, MINUS)) {
+    while ( ! strcmp(curr_token.type, ADD) || ! strcmp(curr_token.type, SUB)) {
         Token token = curr_token;
-        if ( ! strcmp(token.type, PLUS)) {
-            consume(PLUS);
+        if ( ! strcmp(token.type, ADD)) {
+            consume(ADD);
             result += term();
-        } else if ( ! strcmp(token.type, MINUS)) {
-            consume(MINUS);
+        } else if ( ! strcmp(token.type, SUB)) {
+            consume(SUB);
             result -= term();
         }
     }
@@ -192,7 +192,7 @@ float parse() {
 float evaluate_expression() {
     float result = parse();
 
-    if (strcmp(curr_token.type, EOE)) {
+    if (strcmp(curr_token.type, EXPR)) {
         __invalid_syntax_error();
     }
 
