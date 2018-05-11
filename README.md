@@ -5,7 +5,7 @@ A recursive-descent parser in C, that evaluates arithmetic expressions
 $ gcc parser.c -o parser
 $ parser
 > 3+9
-7
+12
 > 10 * 4  * 2 * 3 / 8
 30
 > 5 - - - + - (3 + 4) - +2
